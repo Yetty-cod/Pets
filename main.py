@@ -80,17 +80,19 @@ def get_animals():
 
 @app.route('/waiting_applications')
 def get_applications():
-    application = cur.execute('select * from sittes where waiting = 1').fetchall()
+    application = cur.execute('select * from sittes'
+                              'join pets on sittes.pet_id = pets.id'
+                              'join pets_types on pets.animal_type = pets_types.id'
+                              'join breeds on pets.breed = breeds.id where waiting = 1').fetchall()
     res = []
     for el in application:
-        pet_name = cur.execute(f'select name, animal_type, breed, age from pets where id = {}')
         res.append({'id': el[0],
                     'start_date': el[1],
                     'end_date': el[2],
-                    'pet_name': pet_name,
-                    'pet_type': pet_type,
-                    'pet_breed': pet_breed,
-                    'pet_age': pet_age})
+                    'pet_name': el[7],
+                    'pet_type': el[-3],
+                    'pet_breed': el[-1],
+                    'pet_age': el[-5]})
 
     return jsonify(res)
 

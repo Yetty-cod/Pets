@@ -1,5 +1,5 @@
 import sqlite3
-from flask import Flask, request
+from flask import Flask, request, jsonify
 
 
 app = Flask(__name__)
@@ -54,6 +54,24 @@ def register_pet():
     cur.execute(f'insert into user (name, animal_type, breed, owner, age) values ({name}, {animal_type}, {breed}, {owner}, {age})')
 
     return {'status': 'ok'}
+
+
+@app.route('/animals')
+def get_animals():
+    animals = cur.execute('select * from pets').fetchall()
+    res = []
+    for el in animals:
+        animal_type_name = cur.execute(f'select type_name from pets_types where id = {el[2]}').fetchone()[0]
+        animal_breed_name = cur.execute(f'select breed_name from breeds where id = {el[3]}').fetchone()[0]
+        owner_name_surname = ' '.join(cur.execute(f'select name, surname from user where id = {el[4]}').fetchone()[0])
+        res.append({'id': el[0],
+                    'name': el[1],
+                    'type': animal_type_name,
+                    'breed': animal_breed_name,
+                    'age': el[5],
+                    'owner': owner_name_surname})
+
+    return jsonify(res)
 
 
 if __name__ == '__main__':

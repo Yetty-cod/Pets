@@ -39,7 +39,7 @@ def register_user():
 
     res = make_response({'status': 'ok'})
     user_id = cur.execute(f'select id from user where name = {name} and surname = {surname} and email = {email}').fetchone()[0]
-    res.set_cookie(user_id)
+    res.set_cookie('user_id', user_id)
 
     return res
 
@@ -62,8 +62,6 @@ def register_pet():
 
 @app.route('/users_animals')
 def get_animals():
-    owner_name = request.args.get('owner_name')
-    owner_surname = request.args.get('owner_surname')
 
     owner_id = cur.execute(f'select id from user where name = {owner_name} and surname = {owner_surname}')
     animals = cur.execute(f'select * from pets where owner = {owner_id}').fetchall()

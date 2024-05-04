@@ -56,9 +56,13 @@ def register_pet():
     return {'status': 'ok'}
 
 
-@app.route('/animals')
+@app.route('/users_animals')
 def get_animals():
-    animals = cur.execute('select * from pets').fetchall()
+    owner_name = request.args.get('owner_name')
+    owner_surname = request.args.get('owner_surname')
+
+    owner_id = cur.execute(f'select id from user where name = {owner_name} and surname = {owner_surname}')
+    animals = cur.execute(f'select * from pets where owner = {owner_id}').fetchall()
     res = []
     for el in animals:
         animal_type_name = cur.execute(f'select type_name from pets_types where id = {el[2]}').fetchone()[0]
@@ -70,6 +74,23 @@ def get_animals():
                     'breed': animal_breed_name,
                     'age': el[5],
                     'owner': owner_name_surname})
+
+    return jsonify(res)
+
+
+@app.route('/waiting_applications')
+def get_applications():
+    application = cur.execute('select * from sittes where waiting = 1').fetchall()
+    res = []
+    for el in application:
+        pet_name = cur.execute(f'select name, animal_type, breed, age from pets where id = {}')
+        res.append({'id': el[0],
+                    'start_date': el[1],
+                    'end_date': el[2],
+                    'pet_name': pet_name,
+                    'pet_type': pet_type,
+                    'pet_breed': pet_breed,
+                    'pet_age': pet_age})
 
     return jsonify(res)
 

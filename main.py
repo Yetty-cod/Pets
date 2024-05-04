@@ -100,5 +100,16 @@ def get_applications():
     return jsonify(res)
 
 
+@app.route('/accept_application')
+def accept_application():
+    user_id = request.cookies.get('user_id')
+    sittes_id = request.args.get('sittes_id')
+    cur.execute(f'update sittes set sitter = {user_id}, waiting = 0 where id = {sittes_id}')
+    return {'status': 'ok'}
+
+
+
+
+
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080)

@@ -1,5 +1,5 @@
 import sqlite3
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, make_response
 
 
 app = Flask(__name__)
@@ -37,7 +37,11 @@ def register_user():
 
     cur.execute(f'insert into user (name, surname, email) values ({name}, {surname}, {email})')
 
-    return {'status': 'ok'}
+    res = make_response({'status': 'ok'})
+    user_id = cur.execute(f'select id from user where name = {name} and surname = {surname} and email = {email}').fetchone()[0]
+    res.set_cookie(user_id)
+
+    return res
 
 
 @app.route('/register_pet', methods=['POST'])
@@ -74,6 +78,7 @@ def get_animals():
                     'breed': animal_breed_name,
                     'age': el[5],
                     'owner': owner_name_surname})
+
 
     return jsonify(res)
 

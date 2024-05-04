@@ -108,7 +108,20 @@ def accept_application():
     return {'status': 'ok'}
 
 
+@app.route('/login')
+def accept_application():
+    name = request.args.get('name')
+    surname = request.args.get('surname')
+    email = request.args.get('email')
 
+    user_id = cur.execute(f'select id from user where name = {name} and surname = {surname} and email = {email}').fetchone()
+    if user_id:
+        user_id = user_id[0]
+        res = make_response({'status': 'ok'})
+        res.set_cookie('user_id', user_id)
+        return res
+    else:
+        return 'User does not exist'
 
 
 if __name__ == '__main__':

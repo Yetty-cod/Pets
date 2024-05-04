@@ -63,7 +63,7 @@ def register_pet():
 @app.route('/users_animals')
 def get_animals():
 
-    owner_id = cur.execute(f'select id from user where name = {owner_name} and surname = {owner_surname}')
+    owner_id = request.cookies.get('user_id')
     animals = cur.execute(f'select * from pets where owner = {owner_id}').fetchall()
     res = []
     for el in animals:

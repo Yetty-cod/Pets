@@ -9,6 +9,10 @@ cur = con.cursor()
 
 @app.route('/application', methods=['POST'])
 def application():
+    '''
+    Создание заяаки о передержке
+    :return:
+    '''
     name = request.args.get('name')
     surname = request.args.get('surname')
     email = request.args.get('email')
@@ -28,6 +32,10 @@ def application():
 
 @app.route('/register_user', methods=['POST'])
 def register_user():
+    '''
+    Зарегистрировать нового пользователя
+    :return: cookie
+    '''
     name = request.args.get('name')
     surname = request.args.get('surname')
     email = request.args.get('email')
@@ -46,6 +54,10 @@ def register_user():
 
 @app.route('/register_pet', methods=['POST'])
 def register_pet():
+    '''
+    Зарегистрировать нового питомца
+    :return:
+    '''
     name = request.args.get('name')
     animal_type = request.args.get('animal_type')
     breed = request.args.get('breed')
@@ -62,7 +74,10 @@ def register_pet():
 
 @app.route('/users_animals')
 def get_animals():
-
+    '''
+    Получить питосцев владельца
+    :return: список json
+    '''
     owner_id = request.cookies.get('user_id')
     animals = cur.execute(f'select * from pets where owner = {owner_id}').fetchall()
     res = []
@@ -83,6 +98,10 @@ def get_animals():
 
 @app.route('/waiting_applications')
 def get_applications():
+    '''
+    Получить активные заявки на передержку
+    :return: список json
+    '''
     application = cur.execute('select * from sittes'
                               'join pets on sittes.pet_id = pets.id'
                               'join pets_types on pets.animal_type = pets_types.id'
@@ -102,6 +121,10 @@ def get_applications():
 
 @app.route('/accept_application')
 def accept_application():
+    '''
+    Принять заявку о передержке
+    :return:
+    '''
     user_id = request.cookies.get('user_id')
     sittes_id = request.args.get('sittes_id')
     cur.execute(f'update sittes set sitter = {user_id}, waiting = 0 where id = {sittes_id}')
@@ -110,6 +133,10 @@ def accept_application():
 
 @app.route('/login')
 def accept_application():
+    '''
+    Войти
+    :return: новые cookie
+    '''
     name = request.args.get('name')
     surname = request.args.get('surname')
     email = request.args.get('email')
